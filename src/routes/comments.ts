@@ -2,7 +2,7 @@ import express from 'express';
 
 export const commentRouter = express.Router();
 
-commentRouter.get('/', async (req, res) => {
+commentRouter.post('/new', async (req, res) => {
   try {
     res.send('Comments')
   } catch (err) {
