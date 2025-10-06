@@ -5,9 +5,15 @@ import bcrypt from "bcrypt";
 
 type authRequestProps = Omit<IUser, "_id">;
 
+type AuthResponse<T = unknown> = {
+  message: string | null;
+  data: T | null;
+  error: string | null;
+};
+
 export const userSignup = async (
   req: Request<unknown, unknown, authRequestProps>,
-  res: Response
+  res: Response<AuthResponse>
 ) => {
   try {
     if (!req.body.email || !req.body.password) {
@@ -43,7 +49,9 @@ export const userSignup = async (
       .json({ message: "new user created", data: newUserId, error: null });
   } catch (err) {
     if (err instanceof ValidationError) {
-      res.status(400).json({ message: null, data: null, error: err.message });
+      res
+        .status(400)
+        .json({ message: "validation_error", data: null, error: err.message });
     } else {
       console.error(err);
       res
@@ -55,7 +63,7 @@ export const userSignup = async (
 
 export const userLogin = async (
   req: Request<unknown, unknown, authRequestProps>,
-  res: Response
+  res: Response<AuthResponse>
 ) => {
   try {
     // Example: successful login response (replace with real logic)
@@ -64,7 +72,9 @@ export const userLogin = async (
       .json({ message: "Login successful", data: null, error: null });
   } catch (err) {
     if (err instanceof ValidationError) {
-      res.status(400).json({ message: null, data: null, error: err.message });
+      res
+        .status(400)
+        .json({ message: "validation_error", data: null, error: err.message });
     } else {
       console.error(err);
       res
