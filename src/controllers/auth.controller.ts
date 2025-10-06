@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import { ValidationError } from "../utils/errortypes";
+import { AuthenticationError, ValidationError } from "../utils/errortypes";
 import { IUser, UserModel } from "../models/user.model";
 import bcrypt from "bcrypt";
 
@@ -33,7 +33,9 @@ export const userSignup = async (
     });
 
     if (existingUser > 0) {
-      throw new ValidationError("Please login");
+      throw new AuthenticationError(
+        "Signup error if you already have an account please login"
+      );
     }
 
     if (password.length < 4) {
@@ -60,6 +62,14 @@ export const userSignup = async (
       res
         .status(400)
         .json({ message: "validation_error", data: null, error: err.message });
+    } else if (err instanceof AuthenticationError) {
+      res
+        .status(401)
+        .json({
+          message: "authentication_error",
+          data: null,
+          error: err.message,
+        });
     } else {
       console.error(err);
       res
