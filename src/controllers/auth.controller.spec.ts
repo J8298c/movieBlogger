@@ -37,6 +37,23 @@ describe("AuthController", () => {
       expect(res.body).toHaveProperty("error");
       expect(res.body).toHaveProperty("message");
     });
+
+    it("should return 401 if trying to sign up with an existing email", async () => {
+      const validEmail = "existinguser@example.com";
+      const validPassword = "testpassword";
+      // First, create a user directly in the database
+      await UserModel.create({ email: validEmail, password: validPassword });
+
+      // Now, try to sign up with the same email
+      const res = await request(app)
+        .post(userRoutes.signup)
+        .send({ email: validEmail, password: validPassword });
+
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty("error");
+      expect(res.body).toHaveProperty("message");
+      expect(res.body.data).toBeNull();
+    });
     it("should create a new user when all props are valid", async () => {
       const validEmail = "testuser@example.com";
       const validPassword = "testpassword";
