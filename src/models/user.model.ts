@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export interface IUser {
   _id: mongoose.Types.ObjectId;
@@ -11,16 +11,17 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: String,
     required: true,
     trim: true,
+    unique: true,
     lowercase: true,
     validate: function () {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email);
-    }
+    },
   },
   password: {
     required: true,
     type: String,
-    minlength: 4
-  }
-})
+    minlength: 4,
+  },
+});
 
-export const UserModel = mongoose.model<IUser>('User', UserSchema)
+export const UserModel = mongoose.model<IUser>("User", UserSchema);

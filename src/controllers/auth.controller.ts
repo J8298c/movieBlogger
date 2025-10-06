@@ -28,6 +28,14 @@ export const userSignup = async (
       throw new ValidationError("Invalid email format");
     }
 
+    const existingUser = await UserModel.countDocuments({
+      email: formattedEmail,
+    });
+
+    if (existingUser > 0) {
+      throw new ValidationError("Please login");
+    }
+
     if (password.length < 4) {
       throw new ValidationError(
         "password must be at least 4 characters in length"
@@ -66,6 +74,11 @@ export const userLogin = async (
   res: Response<AuthResponse>
 ) => {
   try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new ValidationError("missing required props");
+    }
+
     // Example: successful login response (replace with real logic)
     res
       .status(200)
